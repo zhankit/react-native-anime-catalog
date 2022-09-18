@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Text, Theme, useTheme } from 'react-native-paper';
-import { animeStartLoadTopTenAction } from '../src/animeAction';
-import { animeTopListSelector } from '../src/animeSelectors';
+import { animeStartLoadLatestAction, animeStartLoadTopTenAction } from '../src/animeAction';
+import { animeLatestSelector, animeTopListSelector } from '../src/animeSelectors';
 import { connect } from 'react-redux';
 import { useAppDispatch } from '../../store/src/mainStore';
 import { useNavigation } from '@react-navigation/native';
@@ -15,12 +15,12 @@ interface AnimeComponentStateProps {
 }
 
 interface AnimeComponentDispatchProps {
-	animeFetchTop: typeof animeStartLoadTopTenAction
+	animeFetchTop: typeof animeStartLoadLatestAction
 }
 
 type AnimeProps = AnimeComponentStateProps & AnimeComponentDispatchProps;
 
-const AnimeTopTenScreen = (props: AnimeProps) => {
+const AnimeLatestScreen = (props: AnimeProps) => {
 
 	const [ isFetching, setIsFetching ] = useState(false)
 
@@ -43,7 +43,7 @@ const AnimeTopTenScreen = (props: AnimeProps) => {
 
 	return (
 		<View style={styles.sessionContainer}>
-			<Text style={{marginLeft: 10}} variant="headlineSmall">{"TOP 10"}</Text>
+			<Text style={{marginLeft: 10}} variant="headlineSmall">{"Latest"}</Text>
 			<FlatList
 				data={props.items}
 				renderItem={renderVerticalItem}
@@ -80,10 +80,10 @@ const styles = StyleSheet.create({
 
 export default connect<AnimeComponentStateProps, AnimeComponentDispatchProps>(
 	(state: GlobalState) => ({
-		items: animeTopListSelector(state),
+		items: animeLatestSelector(state),
 	}),
 	{
-		animeFetchTop: animeStartLoadTopTenAction
+		animeFetchTop: animeStartLoadLatestAction
 	},
-)(AnimeTopTenScreen);
+)(AnimeLatestScreen);
 

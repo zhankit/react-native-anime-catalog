@@ -6,6 +6,10 @@ export const animeListSelector = createSelector(
 	animeMainSelector,
 	anime => anime.list,
 );
+export const animeDetailselector = createSelector(
+	animeMainSelector,
+	anime => anime.details,
+);
 
 export const animeAiringSelector = createSelector(
 	animeListSelector,
@@ -28,7 +32,7 @@ export const animePopularSelector = createSelector(
 	animeListSelector,
 	list => list.popular,
 );
-export const animeTopTenSelector = createSelector(
+export const animeTopListSelector = createSelector(
 	animeListSelector,
 	list => list.topTen,
 );

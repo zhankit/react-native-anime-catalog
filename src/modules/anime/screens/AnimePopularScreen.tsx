@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, View } from 'react-native';
 import { Text, Theme, useTheme } from 'react-native-paper';
-import { animeStartLoadTopTenAction } from '../src/animeAction';
-import { animeTopListSelector } from '../src/animeSelectors';
+import { animeStartLoadPopularAction, animeStartLoadTopTenAction } from '../src/animeAction';
+import { animePopularSelector, animeTopListSelector } from '../src/animeSelectors';
 import { connect } from 'react-redux';
 import { useAppDispatch } from '../../store/src/mainStore';
 import { useNavigation } from '@react-navigation/native';
 import { Anime, AnimeStatus } from '../typings';
 import { GlobalState } from '../../store/typings';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface AnimeComponentStateProps {
 	items?: Anime[],
@@ -15,12 +16,12 @@ interface AnimeComponentStateProps {
 }
 
 interface AnimeComponentDispatchProps {
-	animeFetchTop: typeof animeStartLoadTopTenAction
+	animeFetchTop: typeof animeStartLoadPopularAction
 }
 
 type AnimeProps = AnimeComponentStateProps & AnimeComponentDispatchProps;
 
-const AnimeTopTenScreen = (props: AnimeProps) => {
+const AnimePopularScreen = (props: AnimeProps) => {
 
 	const [ isFetching, setIsFetching ] = useState(false)
 
@@ -43,7 +44,7 @@ const AnimeTopTenScreen = (props: AnimeProps) => {
 
 	return (
 		<View style={styles.sessionContainer}>
-			<Text style={{marginLeft: 10}} variant="headlineSmall">{"TOP 10"}</Text>
+			<Text style={{marginLeft: 10}} variant="headlineSmall">{"Popular"}</Text>
 			<FlatList
 				data={props.items}
 				renderItem={renderVerticalItem}
@@ -80,10 +81,10 @@ const styles = StyleSheet.create({
 
 export default connect<AnimeComponentStateProps, AnimeComponentDispatchProps>(
 	(state: GlobalState) => ({
-		items: animeTopListSelector(state),
+		items: animePopularSelector(state),
 	}),
 	{
-		animeFetchTop: animeStartLoadTopTenAction
+		animeFetchTop: animeStartLoadPopularAction
 	},
-)(AnimeTopTenScreen);
+)(AnimePopularScreen);
 

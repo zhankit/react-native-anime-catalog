@@ -6,6 +6,7 @@ export interface AnimeSearch {
 export type AnimeStatus = 'airing' | 'complete' | 'upcoming' | 'favourite';
 
 export interface AnimeCachePayload {
+	initialLoad: boolean;
 	refreshCache: boolean;
 	type: string;
 	searchString?: string;
@@ -34,10 +35,6 @@ export interface AnimeState {
 }
 
 export interface AnimeList {
-	airing: Anime[];
-	complete: Anime[];
-	upcoming: Anime[];
-
 	search: Anime[];
 	topTen: Anime[];
 	latest: Anime[];
@@ -50,6 +47,7 @@ export interface Anime {
 	images: {
 		[key: string]: images;
 	};
+	about: string;
 	image_url: string;
 	title: string;
 	airing: boolean;
@@ -62,17 +60,29 @@ export interface Anime {
 	start_date: Date | null;
 	end_date: Date | null;
 	members: number;
-	rated: Rated | null;
+	rank: number;
+	rating: Rated | null;
 	favorite: boolean;
+	year: number;
+	producers: Resources;
+	licensors: Resources;
+	demographics: Resources;
+	trailer: Trailer;
+}
+
+export interface Trailer {
+	youtube_id: string;
+	url: string;
+	embed_url: string;
 }
 
 export enum Rated {
-	G = 'G',
-	PG = 'PG',
-	PG13 = 'PG-13',
-	R = 'R',
-	RatedR = 'R+',
-	Rx = 'Rx',
+	G = 'G - All Ages',
+	PG = 'PG - Children',
+	PG13 = 'PG-13 - Teens 13 or older',
+	R = 'R - 17+ (violence & profanity)',
+	RatedR = 'R+ - Mild Nudity',
+	Rx = 'Rx - Hentai',
 }
 
 export enum Type {
@@ -88,4 +98,11 @@ export interface images {
 	image_url: string;
 	small_image_url: string;
 	large_image_url: string;
+}
+
+export interface Resources {
+	mal_id: integer;
+	type: string;
+	name: string;
+	url: string;
 }

@@ -160,7 +160,7 @@ const AnimeDetailScreen = (
 					{	props.details.trailer.embed_url &&
 						<Video
 							source={{ uri: props.details.trailer.embed_url }}
-							style={{ width: 300, height: 300 }}
+							style={{ width: 300, height: 300, backgroundColor: theme.colors.background }}
 							controls={true}
 					/>}
 					<Portal>

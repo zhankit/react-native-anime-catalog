@@ -2,23 +2,25 @@
 import React, { useEffect } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Dimensions } from 'react-native';
-import { animeFetchDetailsAction } from '../src/animeAction';
-import { connect } from 'react-redux';
+import { animeFavouriteAction, animeFetchDetailsAction, animeunFavouriteAction } from '../src/animeAction';
+import { connect, useDispatch } from 'react-redux';
 import { NavigationContainerProps } from '@react-navigation/native';
-import { useAppDispatch } from '../../store/src/mainStore';
 import { Anime } from '../typings';
 import { GlobalState } from '../../store/typings';
-import { animeDetailselector } from '../src/animeSelectors';
-import { ScreenContext } from 'react-native-screens';
+import { animeDetailselector, animeFavouriteselector } from '../src/animeSelectors';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Text, Theme, Title, useTheme } from 'react-native-paper';
+import { Button, Dialog, Portal, Text, Theme, useTheme } from 'react-native-paper';
+import IconButton from 'react-native-vector-icons/AntDesign';
 import Video from 'react-native-video';
 
 interface AnimeDetailsStateProps {
 	animeFetchDetails: typeof animeFetchDetailsAction;
+	animeFav: typeof animeFavouriteAction;
+	animeunFav: typeof animeunFavouriteAction;
 }
 interface AnimeDetailsDispatchProps {
 	details: Anime;
+	favourite: Anime[];
 }
 
 const AnimeDetailScreen = (
@@ -26,13 +28,41 @@ const AnimeDetailScreen = (
 ) => {
 	const { route } = props;
 
-	const dispatch = useAppDispatch();
+	const dispatch = useDispatch();
 	const theme: Theme = useTheme();
+
+	const [isFav, setIsFav] = React.useState<boolean>(props.favourite.findIndex( (list: Anime) => {return list.mal_id === route.params.id}) >= 0)
+	const [visible, setVisible] = React.useState<boolean>(false);
+
+	props.navigation.setOptions({
+		headerTitle: '',
+		tabBarStyle: {
+		display: "none"
+		},
+		headerRight: () => (
+			<IconButton
+				style={{marginRight: 10}}
+				name={isFav ? 'star' : 'staro'}
+				color={isFav ? theme.colors.primary : theme.colors.onSurface}
+				size={24}
+				onPress={() => {
+					if (isFav) {
+						dispatch(props.animeunFav(route.params.id));
+						setIsFav(false)
+						setVisible(true)
+					} else {
+						dispatch(props.animeFav(props.details));
+						setIsFav(true)
+						setVisible(true)
+					}
+				}}
+			/>
+		),
+	})
 
 	useEffect(() => {
 		dispatch(props.animeFetchDetails(route.params.id));
 	}, []);
-
 
 	return (
 		<ScrollView
@@ -127,38 +157,45 @@ const AnimeDetailScreen = (
 							{props.details.episodes ?? 'N/A'}
 						</Text>
 					</View>
-
-					{(props.details.trailer.url || props.details.trailer.embed_url) &&
-					<View style={styles.videoContainer}>
+					{	props.details.trailer.embed_url &&
 						<Video
-							source={{
-								uri: props.details.trailer.url ?? props.details.trailer.embed_url,
-							}}
-							style={styles.video}
+							source={{ uri: props.details.trailer.embed_url }}
+							style={{ width: 300, height: 300 }}
 							controls={true}
-							resizeMode="cover"
-							hideShutterView={true}
-							paused={true}
-						/>
-					</View>}
-
-
+					/>}
+					<Portal>
+						<Dialog visible={visible} onDismiss={() => setVisible(false)}>
+							<Dialog.Title>{isFav ? 'You have favourited!' : 'Sorry to see you unfavourite...'}</Dialog.Title>
+							<Dialog.Content>
+							<Text
+								variant="bodyMedium">
+								{isFav ? 'You may check me out at favourite tab!' : 'Get lucky next time 😃'}
+							</Text>
+							</Dialog.Content>
+							<Dialog.Actions>
+							<Button onPress={() => setVisible(false)}>{'Done'}</Button>
+							</Dialog.Actions>
+						</Dialog>
+					</Portal>
 				</ScrollView>
-
 			}
 			{
 				!props.details &&
-				<View>
-					<Text>{"Loading"}</Text>
+				<View style={{flex: 1}}>
+					<View style={{flex:1, alignItems:'center',justifyContent:'center',alignSelf:'stretch'}}>
+						<Text>{"Loading..."}</Text>
+					</View>
 				</View>
 			}
 		</ScrollView>
 	);
 };
 
+
 const styles = StyleSheet.create({
 	viewContainer: {
 		flex: 1,
+		paddingBottom: 20,
 	},
 	bannerContainer: {
 		width: '100%',
@@ -190,6 +227,11 @@ const styles = StyleSheet.create({
 export default connect<AnimeDetailsStateProps, AnimeDetailsDispatchProps>(
 	(state: GlobalState) => ({
 		details: animeDetailselector(state),
-	}), {
-	animeFetchDetails: animeFetchDetailsAction,
-})(AnimeDetailScreen);
+		favourite: animeFavouriteselector(state)
+	}),
+	{
+		animeFetchDetails: animeFetchDetailsAction,
+		animeFav: animeFavouriteAction,
+		animeunFav: animeunFavouriteAction,
+	}
+)(AnimeDetailScreen);

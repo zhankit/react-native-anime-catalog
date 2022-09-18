@@ -26,6 +26,8 @@ target 'respondio' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+
   target 'respondioTests' do
     inherit! :complete
     # Pods for testing

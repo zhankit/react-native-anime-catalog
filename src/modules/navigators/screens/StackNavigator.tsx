@@ -22,7 +22,7 @@ const AnimeStackContainer = (props: StackContainerStateProps) => {
 	const navigation = useNavigation();
 	const theme: Theme = useTheme();
 
-	const sideMenu: StackNavigationOptions = {
+	const sideListMenu: StackNavigationOptions = {
 		headerLeft: () => (
 			<IconButton
 				style={{marginLeft: 20}}
@@ -48,16 +48,16 @@ const AnimeStackContainer = (props: StackContainerStateProps) => {
 				},
 				// headerShown: false
 			}}>
-			<Stack.Screen name="Anime" options={sideMenu}>
+			<Stack.Screen name="Anime" options={sideListMenu}>
 				{props => (
 					<AnimeListScreen
-						items={{airing: [], complete: [], upcoming: []}}
+						items={[]}
 						{...props}
 						status={types}
 					/>
 				)}
 			</Stack.Screen>
-			<Stack.Screen name="AnimeDetails" component={AnimeDetailScreen} />
+			<Stack.Screen name="AnimeDetails" component={AnimeDetailScreen}/>
 		</Stack.Navigator>
 	);
 };

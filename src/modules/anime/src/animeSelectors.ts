@@ -6,37 +6,18 @@ export const animeListSelector = createSelector(
 	animeMainSelector,
 	anime => anime.list,
 );
+
 export const animeDetailselector = createSelector(
 	animeMainSelector,
 	anime => anime.details,
 );
 
-export const animeAiringSelector = createSelector(
+export const animeFavouriteselector = createSelector(
 	animeListSelector,
-	list => list.airing,
-);
-export const animeCompleteSelector = createSelector(
-	animeListSelector,
-	list => list.complete,
-);
-export const animeUpcomingSelector = createSelector(
-	animeListSelector,
-	list => list.upcoming,
+	list => list.favourite,
 );
 
 export const animeSearchSelector = createSelector(
 	animeListSelector,
 	list => list.search,
-);
-export const animePopularSelector = createSelector(
-	animeListSelector,
-	list => list.popular,
-);
-export const animeTopListSelector = createSelector(
-	animeListSelector,
-	list => list.topTen,
-);
-export const animeLatestSelector = createSelector(
-	animeListSelector,
-	list => list.latest,
 );

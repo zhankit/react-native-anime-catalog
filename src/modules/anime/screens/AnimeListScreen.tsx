@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StatusBar, StyleSheet, View } from 'react-native';
 import { Button, Card, Searchbar, Text, Theme, useTheme } from 'react-native-paper';
 import { animeOnPageLoadAction, animeStartLoadLatestAction, animeStartLoadPopularAction, animeStartLoadTopTenAction } from '../src/animeAction';
-import { animeListSelector, animeSearchSelector } from '../src/animeSelectors';
+import { animeFavouriteselector, animeSearchSelector } from '../src/animeSelectors';
 import { connect } from 'react-redux';
 import { useAppDispatch } from '../../store/src/mainStore';
 import { useNavigation } from '@react-navigation/native';
-import { Anime, AnimeList, AnimeStatus } from '../typings';
+import { Anime, AnimeStatus } from '../typings';
 import { GlobalState } from '../../store/typings';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import AnimeTopTenScreen from './AnimeTopTenScreen';
-import AnimeLatestScreen from './AnimeLatestScreen';
-import AnimePopularScreen from './AnimePopularScreen';
 
 interface AnimeStateProps {
 	items: Anime[];
+	fav: Anime[];
 	status: AnimeStatus;
 }
 
@@ -51,10 +49,15 @@ const AnimeListScreen = (props: AnimeProps) => {
 		);
 	}, []);
 
+	const wait = (timeout: number) => {
+		return new Promise(resolve => setTimeout(resolve, timeout));
+	  }
+
 	const refreshList = () => {
 		setIsFetching(true);
+		setSearchValue('');
 		dispatch(props.animeRefresh({ initialLoad: false, refreshCache: true, type: props.status, searchString: ''}));
-		setIsFetching(false);
+		wait(2000).then(() => setIsFetching(false));
 	};
 
 	const onChangeSearch = (query: string) => {
@@ -91,53 +94,53 @@ const AnimeListScreen = (props: AnimeProps) => {
 	);
 
 	const renderComponentList = () => {
-
-		// if (props.status !== 'favourite' && searchValue.length === 0) {
-		// 	// TODO: Add component screen here
-		// 	return (
-		// 		<ScrollView>
-		// 			<View>
-		// 				<AnimeTopTenScreen status={props.status} />
-		// 				<AnimeLatestScreen status={props.status} />
-		// 				<AnimePopularScreen status={props.status} />
-		// 			</View>
-		// 		</ScrollView>
-		// 	)
-		// } else if (props.items.length === 0 && searchValue.length !== 0) {
-		// 	// TODO: Add component screen here
-		// 	return (
-		// 		<ScrollView>
-		// 			<View style={{alignItems: "center"}}>
-		// 				<Text>{"Empty Result"}</Text>
-		// 			</View>
-		// 		</ScrollView>
-		// 	)
-		// } else {
+		if (props.status === 'favourite' && props.fav.length === 0) {
 			return (
-				<View style={{ marginBottom: bottonTabHeight }}>
-					<FlatList
-						data={props.items}
-						renderItem={renderHorizontalItem}
-						alwaysBounceVertical={false}
-						// keyExtractor={item => item.name}
-						onEndReachedThreshold={0.3}
-						onRefresh={refreshList}
-						// refreshControl={<ActivityIndicator />}
+			<View style={{ alignItems: "center", flex: 1}}>
+				<View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch'}}>
+				  <Text variant='bodyMedium' >{'No favourite anime in your list. :( '}</Text>
+  				</View>
+			</View>)
+		}
+
+		if (props.status !== 'favourite' && props.items.length === 0) {
+			return (
+			<View style={{ alignItems: "center", flex: 1}}>
+				<View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch'}}>
+				  <Text variant='bodyMedium' >{'Where is the anime, Kanji?!  :( '}</Text>
+  				</View>
+			</View>)
+		}
+
+		return (
+			<View style={{ marginBottom: bottonTabHeight }}>
+				<FlatList
+					data={props.status === 'favourite' ? props.fav : props.items}
+					renderItem={renderHorizontalItem}
+					alwaysBounceVertical={false}
+					// keyExtractor={item => item.name}
+					onEndReachedThreshold={0.3}
+					onRefresh={refreshList}
+					refreshControl={<RefreshControl
+						size="large"
+						tintColor={theme.colors.onSurface}
 						refreshing={isFetching}
-						onEndReached={() => {
-							dispatch(
-								props.animeRefresh({
-									initialLoad: false,
-									refreshCache: false,
-									type: props.status,
-									searchString: searchValue,
-								}),
-							);
-						}}
-					/>
-				</View>
-			);
-		// }
+						onRefresh={refreshList}
+					  />}
+					refreshing={isFetching}
+					onEndReached={() => {
+						dispatch(
+							props.animeRefresh({
+								initialLoad: false,
+								refreshCache: false,
+								type: props.status,
+								searchString: searchValue,
+							}),
+						);
+					}}
+				/>
+			</View>
+		);
 	};
 
 	return (
@@ -151,7 +154,7 @@ const AnimeListScreen = (props: AnimeProps) => {
 			{props.status !== 'favourite' && (
 				<Searchbar
 					style={{ backgroundColor: theme.colors.backdrop, margin: 10 }}
-					placeholder="Jijitsu"
+					placeholder="Jujutsu kaisen..."
 					onChangeText={onChangeSearch}
 					onEndEditing={() => {
 						onStartSearch();
@@ -193,6 +196,7 @@ const styles = StyleSheet.create({
 export default connect<AnimeStateProps, AnimeDispatchProps>(
 	(state: GlobalState) => ({
 		items: animeSearchSelector(state),
+		fav: animeFavouriteselector(state),
 	}),
 	{
 		animeRefresh: animeOnPageLoadAction,

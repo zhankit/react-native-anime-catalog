@@ -1,26 +1,20 @@
 import {
 	animeOnPageLoadAction,
 	animeLoadSearchAction,
-	animeLoadLatestAction,
-	animeLoadPopularAction,
-	animeStartLoadTopTenAction,
-	animeLoadTopTenAction,
 	clearAnimeListAction,
 	animeFetchDetailsAction,
 	animeLoadDetailsAction,
-	animeStartLoadPopularAction,
-	animeStartLoadLatestAction,
+	animeFavouriteAction,
+	animeunFavouriteAction,
 } from './animeAction';
 import { combineReducers, createReducer } from '@reduxjs/toolkit';
-import { AnimeState } from '../typings';
+import { Anime, AnimeState } from '../typings';
 
 // State
 const ANIME_INITIAL_STATE: AnimeState = {
 	list: {
 		search: [],
-		topTen: [],
-		latest: [],
-		popular: [],
+		favourite: [],
 	},
 	details: null,
 	loading: false,
@@ -37,28 +31,14 @@ const list = createReducer(ANIME_INITIAL_STATE.list, builder => {
 				search: [...state.search, ...action.payload],
 			});
 		})
-		.addCase(animeStartLoadLatestAction, () => {
-			ANIME_INITIAL_STATE.list;
-		})
-		.addCase(animeLoadLatestAction, (state, action) => {
+		.addCase(animeFavouriteAction, (state, action) => {
 			return Object.assign({}, state, {
-				latest: [...state.latest, ...action.payload],
+				favourite: state.favourite.findIndex( (list: Anime) => {return list.mal_id === action.payload.mal_id}) < 0 ? [...state.favourite, action.payload] : [...state.favourite],
 			});
 		})
-		.addCase(animeStartLoadPopularAction, () => {
-			ANIME_INITIAL_STATE.list;
-		})
-		.addCase(animeLoadPopularAction, (state, action) => {
+		.addCase(animeunFavouriteAction, (state, action) => {
 			return Object.assign({}, state, {
-				popular: [...state.popular, ...action.payload],
-			});
-		})
-		.addCase(animeStartLoadTopTenAction, () => {
-			ANIME_INITIAL_STATE.list;
-		})
-		.addCase(animeLoadTopTenAction, (state, action) => {
-			return Object.assign({}, state, {
-				topTen: [...action.payload],
+				favourite: state.favourite.filter(anime => anime.mal_id !== action.payload),
 			});
 		})
 		.addDefaultCase(() => {

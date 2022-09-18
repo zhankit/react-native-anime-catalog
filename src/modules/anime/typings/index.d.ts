@@ -36,9 +36,7 @@ export interface AnimeState {
 
 export interface AnimeList {
 	search: Anime[];
-	topTen: Anime[];
-	latest: Anime[];
-	popular: Anime[];
+	favourite: Anime[];
 }
 
 export interface Anime {

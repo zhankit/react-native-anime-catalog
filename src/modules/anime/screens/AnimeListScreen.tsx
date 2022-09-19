@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, RefreshControl, StatusBar, StyleSheet, View } from 'react-native';
 import { Button, Card, Searchbar, Text, Theme, useTheme } from 'react-native-paper';
-import { animeOnPageLoadAction, animeStartLoadLatestAction, animeStartLoadPopularAction, animeStartLoadTopTenAction } from '../src/animeAction';
+import { animeOnPageLoadAction} from '../src/animeAction';
 import { animeFavouriteselector, animeSearchSelector } from '../src/animeSelectors';
 import { connect } from 'react-redux';
-import { useAppDispatch } from '../../store/src/mainStore';
 import { useNavigation } from '@react-navigation/native';
 import { Anime, AnimeStatus } from '../typings';
 import { GlobalState } from '../../store/typings';
@@ -18,9 +17,6 @@ interface AnimeStateProps {
 
 interface AnimeDispatchProps {
 	animeRefresh: typeof animeOnPageLoadAction;
-	animeFetchTop: typeof animeStartLoadTopTenAction;
-	animeFetchLatest: typeof animeStartLoadLatestAction;
-	animeFetchPopular: typeof animeStartLoadPopularAction;
 }
 
 type AnimeProps = AnimeStateProps & AnimeDispatchProps;
@@ -30,7 +26,6 @@ const AnimeListScreen = (props: AnimeProps) => {
 	const [searchValue, setSearchValue] = useState('');
 
 	const navigation = useNavigation();
-	const dispatch = useAppDispatch();
 	const theme: Theme = useTheme();
 
 	let bottonTabHeight = 0
@@ -39,14 +34,12 @@ const AnimeListScreen = (props: AnimeProps) => {
 	} catch (e) {}
 
 	useEffect(() => {
-		dispatch(
-			props.animeRefresh({
-				initialLoad: false,
-				refreshCache: true,
-				type: props.status,
-				searchString: '',
-			}),
-		);
+		props.animeRefresh({
+			initialLoad: false,
+			refreshCache: true,
+			type: props.status,
+			searchString: ''
+		})
 	}, []);
 
 	const wait = (timeout: number) => {
@@ -56,7 +49,7 @@ const AnimeListScreen = (props: AnimeProps) => {
 	const refreshList = () => {
 		setIsFetching(true);
 		setSearchValue('');
-		dispatch(props.animeRefresh({ initialLoad: false, refreshCache: true, type: props.status, searchString: ''}));
+		props.animeRefresh({ initialLoad: false, refreshCache: true, type: props.status, searchString: ''});
 		wait(2000).then(() => setIsFetching(false));
 	};
 
@@ -65,16 +58,13 @@ const AnimeListScreen = (props: AnimeProps) => {
 	};
 
 	const onStartSearch = () => {
-		// setSearchValue(query)
-		dispatch(
-			props.animeRefresh({
-				initialLoad: false,
-				refreshCache: true,
-				type: props.status,
-				searchString: searchValue,
-			}),
-		);
-	};
+		props.animeRefresh({
+			initialLoad: false,
+			refreshCache: true,
+			type: props.status,
+			searchString: searchValue,
+		})
+	}
 
 	const renderHorizontalItem = ({ item }: {item: Anime}) => (
 		<Card style={styles.cardContainer}>
@@ -128,15 +118,14 @@ const AnimeListScreen = (props: AnimeProps) => {
 						onRefresh={refreshList}
 					  />}
 					refreshing={isFetching}
-					onEndReached={() => {
-						dispatch(
-							props.animeRefresh({
-								initialLoad: false,
-								refreshCache: false,
-								type: props.status,
-								searchString: searchValue,
-							}),
-						);
+					onEndReached={ () => {
+						console.log("This is reach");
+						props.animeRefresh({
+							initialLoad: false,
+							refreshCache: false,
+							type: props.status,
+							searchString: searchValue,
+						})
 					}}
 				/>
 			</View>
@@ -168,16 +157,12 @@ const AnimeListScreen = (props: AnimeProps) => {
 };
 
 const styles = StyleSheet.create({
-	viewContainer: {
-		// marginBottom: bottonTabHeight
-	},
+	viewContainer: {},
 	verticalContainer: {
-		// borderRadius: 10,
 		marginVertical: 10,
 		flex: 1,
 		flexDirection: 'column',
 		height: 400,
-		// width: 200,
 		backgroundColor: 'black',
 		alignItems: 'center',
 	},
@@ -199,9 +184,6 @@ export default connect<AnimeStateProps, AnimeDispatchProps>(
 		fav: animeFavouriteselector(state),
 	}),
 	{
-		animeRefresh: animeOnPageLoadAction,
-		animeFetchTop: animeStartLoadTopTenAction,
-		animeFetchLatest: animeStartLoadLatestAction,
-		animeFetchPopular: animeStartLoadPopularAction,
+		animeRefresh: animeOnPageLoadAction
 	},
 )(AnimeListScreen);

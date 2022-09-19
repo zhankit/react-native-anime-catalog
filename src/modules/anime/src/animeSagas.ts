@@ -32,10 +32,11 @@ function* retrieveAnimeList() {
 			const isRefreshed: boolean = cachedConfig.refreshCache;
 
 			const animeList: AnimeList = yield select(animeListSelector);
-			const offsetValue = animeList.search.length / 20 + 1;
+			const offsetValue = isRefreshed ? 1 : animeList.search.length / 20 + 1;
 
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/unbound-method
 			const url = `${animeBaseURL}/anime?limit=20&page=${offsetValue}&status=${cachedConfig.type}&letter=${cachedConfig.searchString}&order_by=score&sort=desc&sfw=true`;
+
 			const response = yield call(axios.get, url);
 			if (isRefreshed) {
 				yield put(clearAnimeListAction());

@@ -14,21 +14,20 @@ import IconButton from 'react-native-vector-icons/AntDesign';
 import Video from 'react-native-video';
 
 interface AnimeDetailsStateProps {
+	details: Anime;
+	favourite: Anime[];
+}
+interface AnimeDetailsDispatchProps {
 	animeFetchDetails: typeof animeFetchDetailsAction;
 	animeFav: typeof animeFavouriteAction;
 	animeunFav: typeof animeunFavouriteAction;
 }
-interface AnimeDetailsDispatchProps {
-	details: Anime;
-	favourite: Anime[];
-}
 
 const AnimeDetailScreen = (
-	props: AnimeDetailsDispatchProps & AnimeDetailsStateProps & NavigationContainerProps,
+	props:  AnimeDetailsStateProps & AnimeDetailsDispatchProps & NavigationContainerProps,
 ) => {
 	const { route } = props;
 
-	const dispatch = useDispatch();
 	const theme: Theme = useTheme();
 
 	const [isFav, setIsFav] = React.useState<boolean>(props.favourite.findIndex( (list: Anime) => {return list.mal_id === route.params.id}) >= 0)
@@ -47,11 +46,11 @@ const AnimeDetailScreen = (
 				size={24}
 				onPress={() => {
 					if (isFav) {
-						dispatch(props.animeunFav(route.params.id));
+						props.animeunFav(route.params.id);
 						setIsFav(false)
 						setVisible(true)
 					} else {
-						dispatch(props.animeFav(props.details));
+						props.animeFav(props.details);
 						setIsFav(true)
 						setVisible(true)
 					}
@@ -61,7 +60,7 @@ const AnimeDetailScreen = (
 	})
 
 	useEffect(() => {
-		dispatch(props.animeFetchDetails(route.params.id));
+		props.animeFetchDetails(route.params.id);
 	}, []);
 
 	return (

@@ -9,13 +9,11 @@ Anime catalog is a simple react native application that contains necessary funct
 
 ## Sample Recording
 
-### iOS
-https://user-images.githubusercontent.com/24902197/190944172-480be81c-4e15-430a-80cf-17ccbfe237c5.mov
-
 ### android
-https://user-images.githubusercontent.com/24902197/190947354-2ba5736e-7095-4209-8153-8f61af8b51be.mp4
+<img width="240" alt="Screenshot 2022-09-19 at 1 34 46 PM" src="https://user-images.githubusercontent.com/24902197/190956307-13b03368-e9d5-4135-89cc-da44a4b6cf5b.png">
 
-
+### iOS
+<img width="268" alt="Screenshot 2022-09-19 at 1 36 12 PM" src="https://user-images.githubusercontent.com/24902197/190956303-98bdc593-f61c-4cd4-9bcf-a24625bf5914.png">
 
 
 ## 📚 Getting Started

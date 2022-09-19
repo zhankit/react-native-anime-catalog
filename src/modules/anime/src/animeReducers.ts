@@ -22,7 +22,11 @@ const ANIME_INITIAL_STATE: AnimeState = {
 
 const list = createReducer(ANIME_INITIAL_STATE.list, builder => {
 	builder
-		.addCase(clearAnimeListAction, () => ANIME_INITIAL_STATE.list)
+		.addCase(clearAnimeListAction, (state, action) => {
+			return Object.assign({}, state, {
+				search: ANIME_INITIAL_STATE.list.search,
+			});
+		})
 		.addCase(animeOnPageLoadAction, () => {
 			ANIME_INITIAL_STATE.list;
 		})

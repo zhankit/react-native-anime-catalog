@@ -113,14 +113,14 @@ const AnimeListScreen = (props: AnimeProps) => {
 		}
 
 		return (
-			<View style={{ marginBottom: bottonTabHeight }}>
+			<View style={{ flex: 1, marginBottom: bottonTabHeight }}>
 				<FlatList
 					data={props.status === 'favourite' ? props.fav : props.items}
 					renderItem={renderHorizontalItem}
 					alwaysBounceVertical={false}
 					// keyExtractor={item => item.name}
 					onEndReachedThreshold={0.3}
-					onRefresh={refreshList}
+					onRefresh={props.status === 'favourite' ? null : refreshList}
 					refreshControl={<RefreshControl
 						size="large"
 						tintColor={theme.colors.onSurface}

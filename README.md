@@ -7,6 +7,10 @@
 
 Anime catalog is a simple react native application that contains necessary functionality to list, view and add to favorite Anime.
 
+## Sample Recording
+https://user-images.githubusercontent.com/24902197/190944172-480be81c-4e15-430a-80cf-17ccbfe237c5.mov
+
+
 ## 📚 Getting Started
 
 > To start the project with the following command

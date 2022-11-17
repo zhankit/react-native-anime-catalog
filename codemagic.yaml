@@ -1,8 +1,6 @@
 workflows:
   test-staging:
     name: Staging
-    environment:
-      ndk: r23
     scripts:
         - name: Hello World
           script: |

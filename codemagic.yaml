@@ -3,13 +3,13 @@ workflows:
     name: Staging
     scripts:
         - name: Hello World
-          script: |
+          script:
             - echo "Hello World!"
         - name: yarn install
-          script: |
+          script:
             - yarn
         - name: yarn testing
-          script: |
+          script:
             - yarn jest
     cache:
       cache_paths:

@@ -1,5 +1,19 @@
 workflows:
-  hello-world:
-    name: Hello world workflow
+  test-staging:
+    name: Staging
+    environment:
+      ndk: r23
     scripts:
-        - echo "Hello World!"
+        - name: Hello World
+          script: |
+            - echo "Hello World!"
+        - name: yarn install
+          script: |
+            - yarn
+        - name: yarn testing
+          script: |
+            - yarn jest
+    cache:
+      cache_paths:
+        - $HOME/Library/Caches/CocoaPods
+

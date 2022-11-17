@@ -1,17 +1,15 @@
 workflows:
   test-staging:
     name: Staging
-    scripts:
-        - name: Hello World
-          script:
-            - echo "Hello World!"
-        - name: yarn install
-          script:
-            - yarn
-        - name: yarn testing
-          script:
-            - yarn jest
+        scripts:
+            - name: Install npm dependencies
+              script: |
+                yarn install
+            - name: Yarn Test
+              script: |
+                yarn jest
     cache:
       cache_paths:
         - $HOME/Library/Caches/CocoaPods
+
 
